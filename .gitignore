@@ -1,0 +1,5 @@
+# Ignore actual Dockerfiles created from templates
+Dockerfile
+
+# WSL tarballs
+*.tar
