@@ -12,6 +12,7 @@ function buildDistro()
     sed -i "s/USER/$user/g" Dockerfile
     podman build -t fedora32-wsl2-$distro:latest .
     ret=$?
+    rm -f Dockerfile
     [ $ret -ne 0 ] && { echo "$image image build failed"; exit 1; }
     popd
     # Create container to grab filesystem snapshot
