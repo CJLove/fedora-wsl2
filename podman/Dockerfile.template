@@ -3,7 +3,7 @@ FROM fedora:32
 # Create non-root user USER
 RUN \
     dnf update --nogpgcheck -y && \
-    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file && \
+    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file fileutils && \
     groupadd -g 1000 USER  && \
     useradd -g 1000 -u 1000 -m USER && \
     echo "USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/USER 
