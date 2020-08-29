@@ -1,9 +1,23 @@
-FROM fedora:32
+FROM fedora:VER
 
+COPY .bashrc_patch /
 # Create non-root user USER
 RUN \
     dnf update --nogpgcheck -y && \
-    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file fileutils && \
+    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file && \
     groupadd -g 1000 USER  && \
     useradd -g 1000 -u 1000 -m USER && \
-    echo "USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/USER 
+    echo "USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/USER && \
+    mkdir -p /home/USER/.config/containers && \
+    chown USER:USER /home/USER/.config && \
+    chown USER:USER /home/USER/.config/containers && \
+    cp /usr/share/containers/containers.conf /home/USER/.config/containers && \
+    chown USER:USER /home/USER/.config/containers/containers.conf && \
+    sed -i 's/^# cgroup_manager.*/cgroup_manager = "cgroupfs"/g' /home/USER/.config/containers/containers.conf && \
+    sed -i 's/^# events_logger.*/events_logger = "file"/g' /home/USER/.config/containers/containers.conf && \
+    cp /usr/share/containers/containers.conf /etc/containers/containers.conf && \
+    sed -i 's/^# cgroup_manager.*/cgroup_manager = "cgroupfs"/g' /etc/containers/containers.conf && \
+    sed -i 's/^# events_logger.*/events_logger = "file"/g' /etc/containers/containers.conf && \
+    cat /.bashrc_patch >> /home/USER/.bashrc 
+
+

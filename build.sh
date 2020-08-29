@@ -4,22 +4,26 @@ function buildDistro()
 {
     local dir=$1
     local user=$2
-    local distro=$3
+    local version=$3
+    local distro=$4
+
+    echo "Building Fedora$version-$distro image with user $user"
 
     # Build image from Dockerfile
     pushd $dir
     cp Dockerfile.template Dockerfile
     sed -i "s/USER/$user/g" Dockerfile
-    podman build -t fedora32-wsl2-$distro:latest .
+    sed -i "s/VER/$version/g" Dockerfile
+    podman build -t fedora$version-wsl2-$distro:latest .
     ret=$?
     rm -f Dockerfile
     [ $ret -ne 0 ] && { echo "$image image build failed"; exit 1; }
     popd
     # Create container to grab filesystem snapshot
-    podman run --name fedora-ctr fedora32-wsl2-$distro cat /etc/fedora-release
+    podman run --name fedora-ctr fedora$version-wsl2-$distro cat /etc/fedora-release
     [ $? -ne 0 ] && { echo "Error creating container using $image image"; exit 1; }
     # Grab filesystem snapshot as a tarball
-    podman export fedora-ctr > wsl-fedora32-$distro.tar
+    podman export fedora-ctr > wsl-fedora$version-$distro.tar
     [ $? -ne 0 ] && { echo "Error exporting filesystem tarball from $image container"; exit 1; }
     # Cleanup the container
     podman rm fedora-ctr
@@ -30,8 +34,9 @@ function showUsage()
 {
     cat << EOT
 Usage:
-    $(basename $0) [--user <user>] [--distro <distroType>]
+    $(basename $0) [--version <version>][--user <user>] [--distro <distroType>]
 
+--version=<version>     - Fedora version (32+)
 --user=<user>           - specify the non-root username which will be created with sudo access
 --distro=<distroType>   - specify the type of distro to build:
                             - base   - minimal Fedora distro
@@ -41,8 +46,9 @@ return 1
 }
 
 # Parameter defaults
-image=base
+distro=base
 user=user
+version=32
 
 # Handle command-line arguments
 while test $# -gt 0; do
@@ -60,6 +66,9 @@ while test $# -gt 0; do
     shift
 
     case $param in
+        version=*)
+            version=$(echo $param|cut -f2 -d'=')
+            ;;
         user=*)
             user=$(echo $param|cut -f2 -d'=')
             ;;
@@ -79,12 +88,12 @@ while test $# -gt 0; do
 
 done
 
-case $image in
+case $distro in
 base)
-    buildDistro base "$user" base
+    buildDistro base "$user" "$version" base
     ;;
 podman)
-    buildDistro podman "$user" podman
+    buildDistro podman "$user" "$version" podman
     ;;
 *)
     echo "Unsupported distro type $image"
