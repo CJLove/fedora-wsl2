@@ -23,11 +23,6 @@ This image is based on the Fedora 32+ Docker base image with packages added to s
 
 Thanks to [Jonathan Bowman's](https://dev.to/bowmanjd/using-podman-on-windows-subsystem-for-linux-wsl-58ji) post for identifying steps to get rootless Podman working under WSL2.
 
-The remaining workaround with the wsl-fedora-podman image is:
-```bash
-sudo dnf reinstall shadow-utils
-```
-
 ## Alternative Docker support
 The alternative way to achieve container support within a WSL2 distro is as follows:
 1. Install [Docker Desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows), and enable the WSL2 backend.

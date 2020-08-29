@@ -27,6 +27,7 @@ function buildDistro()
     [ $? -ne 0 ] && { echo "Error exporting filesystem tarball from $image container"; exit 1; }
     # Cleanup the container
     podman rm fedora-ctr
+    echo "WSL distro available in wsl-fedora$version-$distro.tar"
 
 }
 

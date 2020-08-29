@@ -4,10 +4,11 @@ COPY .bashrc_patch /
 # Create non-root user USER
 RUN \
     dnf update --nogpgcheck -y && \
-    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file && \
+    dnf install --nogpgcheck -y sudo openssh openssh-clients iputils net-tools which podman buildah nmap-ncat file hostname && \
     groupadd -g 1000 USER  && \
     useradd -g 1000 -u 1000 -m USER && \
     echo "USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/USER && \
+    dnf reinstall -y shadow-utils && \
     mkdir -p /home/USER/.config/containers && \
     chown USER:USER /home/USER/.config && \
     chown USER:USER /home/USER/.config/containers && \
@@ -18,6 +19,7 @@ RUN \
     cp /usr/share/containers/containers.conf /etc/containers/containers.conf && \
     sed -i 's/^# cgroup_manager.*/cgroup_manager = "cgroupfs"/g' /etc/containers/containers.conf && \
     sed -i 's/^# events_logger.*/events_logger = "file"/g' /etc/containers/containers.conf && \
-    cat /.bashrc_patch >> /home/USER/.bashrc 
+    cat /.bashrc_patch >> /home/USER/.bashrc && \
+    rm -f /.bashrc_patch
 
 
