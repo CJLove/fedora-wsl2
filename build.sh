@@ -42,6 +42,7 @@ Usage:
 --distro=<distroType>   - specify the type of distro to build:
                             - base   - minimal Fedora distro
                             - podman - Fedora distro with Podman, Buildah (NOTE: work in progress)
+                            - cpp    - C++ development
 EOT
 return 1
 }
@@ -95,6 +96,9 @@ base)
     ;;
 podman)
     buildDistro podman "$user" "$version" podman
+    ;;
+cpp)
+    buildDistro cpp "$user" "$version" cpp
     ;;
 *)
     echo "Unsupported distro type $image"
