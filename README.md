@@ -2,7 +2,18 @@
 Support custom Fedora-based WSL2 distributions.  The distributions are built based on custom Fedora 32+ Docker images from which the filesystem is exported as a tarball.
 
 ```bash
-# ./build.sh [--version=<version>][--user=<user>][--distro=<distroType>]
+> ./build.sh -?
+Usage:
+    build.sh [--version <version>][--user <user>][--distro <distroType>][--sshPub <pubKey>][--sshPriv <privKey>]
+
+--version=<version>     - Fedora version (32+)
+--user=<user>           - specify the non-root username which will be created with sudo access
+--distro=<distroType>   - specify the type of distro to build:
+                            - base   - minimal Fedora distro
+                            - podman - Fedora distro with Podman, Buildah (NOTE: work in progress)
+                            - cpp    - C++ development
+--sshPub=<pubKey>       - specify an existing ssh public key file to insert in user's .ssh directory
+--sshPriv=<privKey>     - specify an existing ssh private key file to insert in user's .ssh directory
 ```
 
 The tarball then can be imported as a WSL distribution from Powershell:

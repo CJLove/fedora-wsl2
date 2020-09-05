@@ -1,6 +1,8 @@
 FROM fedora:VER
 
 COPY .bashrc_patch /
+COPY ssh /ssh
+
 # Create non-root user USER
 RUN \
     dnf update --nogpgcheck -y && \
@@ -20,6 +22,8 @@ RUN \
     sed -i 's/^# cgroup_manager.*/cgroup_manager = "cgroupfs"/g' /etc/containers/containers.conf && \
     sed -i 's/^# events_logger.*/events_logger = "file"/g' /etc/containers/containers.conf && \
     cat /.bashrc_patch >> /home/USER/.bashrc && \
-    rm -f /.bashrc_patch
+    rm -f /.bashrc_patch && \
+    mv /ssh /home/USER/.ssh && \
+    chown -R USER:USER /home/USER/.ssh    
 
 
